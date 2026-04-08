@@ -35,6 +35,8 @@ const mealToday = document.querySelector("#meal-today");
 const weatherText = document.querySelector("#weather-text");
 const outfitText = document.querySelector("#outfit-text");
 const roomGrid = document.querySelector("#room-grid");
+const roomCompletionText = document.querySelector("#room-completion-text");
+const roomProgressBar = document.querySelector("#room-progress-bar");
 const shopItems = document.querySelector("#shop-items");
 const pdfStatus = document.querySelector("#pdf-status");
 const pdfPreview = document.querySelector("#pdf-preview");
@@ -126,19 +128,18 @@ function renderAll() {
   pdfStatus.textContent = state.mealData.rawText ? "読み込み済み" : "未読み込み";
 
   roomGrid.innerHTML = "";
-  state.ownedItems.forEach((item) => {
-    const badge = document.createElement("div");
-    badge.className = "room-item";
-    badge.textContent = toItemLabel(item);
-    roomGrid.appendChild(badge);
-  });
+  roomGrid.appendChild(renderRoomScene(state.ownedItems));
+
+  const completion = calculateRoomCompletion(state.ownedItems);
+  roomCompletionText.textContent = `完成度 ${completion}%`;
+  roomProgressBar.style.width = `${completion}%`;
 
   shopItems.innerHTML = "";
   SHOP_ITEMS.forEach((item) => {
     const row = document.createElement("div");
     row.className = "shop-row";
     const owned = state.ownedItems.includes(item.id);
-    row.innerHTML = `<span>${item.label}</span><span>${item.cost}pt</span>`;
+    row.innerHTML = `<span class="shop-item-name">${item.label}</span><span class="shop-item-cost">${item.cost}pt</span>`;
     const button = document.createElement("button");
     button.textContent = owned ? "所持中" : "購入";
     button.disabled = owned;
@@ -367,6 +368,46 @@ function toItemLabel(itemId) {
     "storage-box": "🧺 収納ボックス",
   };
   return labels[itemId] || itemId;
+}
+
+function renderRoomScene(ownedItems) {
+  const scene = document.createElement("div");
+  scene.className = "room-scene";
+
+  const wall = document.createElement("div");
+  wall.className = "room-wall";
+
+  const floor = document.createElement("div");
+  floor.className = "room-floor";
+
+  const groupedItems = {
+    wall: ["clock", "poster", "whiteboard"],
+    left: ["closet", "plant", "bookshelf", "lamp"],
+    center: ["desk", "chair", "cushion", "speaker"],
+    right: ["carpet", "humidifier", "bedside-table", "storage-box"],
+  };
+
+  groupedItems.wall.forEach((itemId) => appendRoomItem(wall, itemId, ownedItems));
+  groupedItems.left.forEach((itemId) => appendRoomItem(floor, itemId, ownedItems, "left"));
+  groupedItems.center.forEach((itemId) => appendRoomItem(floor, itemId, ownedItems, "center"));
+  groupedItems.right.forEach((itemId) => appendRoomItem(floor, itemId, ownedItems, "right"));
+
+  scene.appendChild(wall);
+  scene.appendChild(floor);
+  return scene;
+}
+
+function appendRoomItem(parent, itemId, ownedItems, zone = "") {
+  if (!ownedItems.includes(itemId)) return;
+  const badge = document.createElement("div");
+  badge.className = `room-item ${zone}`.trim();
+  badge.textContent = toItemLabel(itemId);
+  parent.appendChild(badge);
+}
+
+function calculateRoomCompletion(ownedItems) {
+  const totalItems = REQUIRED_ITEMS.length + SHOP_ITEMS.length;
+  return Math.round((ownedItems.length / totalItems) * 100);
 }
 
 function loadState() {
