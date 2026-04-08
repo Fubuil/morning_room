@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morning Room</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <h1>Morning Room</h1>
+        <p>整えるほど、朝が軽くなる。</p>
+      </header>
+
+      <main>
+        <section id="view-home" class="view active">
+          <div class="card score-card">
+            <div>
+              <p class="label">今日の整いスコア</p>
+              <p id="daily-score" class="big">--</p>
+            </div>
+            <div>
+              <p class="label">ポイント</p>
+              <p id="point-value" class="big">0</p>
+            </div>
+          </div>
+
+          <div class="card weather-card">
+            <h2>天気と身支度</h2>
+            <p id="weather-text">取得中...</p>
+            <p id="outfit-text">服装アドバイスを準備中...</p>
+          </div>
+
+          <div class="card morning-card">
+            <h2>朝のおすすめ手順</h2>
+            <ol id="morning-steps"></ol>
+          </div>
+
+          <div class="card meal-card">
+            <h2>今日の寮食</h2>
+            <p id="meal-today">PDFを読み込むと表示されます。</p>
+          </div>
+        </section>
+
+        <section id="view-check" class="view">
+          <div class="card">
+            <h2>机チェック</h2>
+            <p>理想の机と今の机を比較し、差分を可視化します。</p>
+            <label class="upload-btn">
+              現在の机を撮影/選択
+              <input type="file" id="current-desk-input" accept="image/*" capture="environment" />
+            </label>
+          </div>
+
+          <div class="card">
+            <h3>差分結果</h3>
+            <p id="check-summary">まだ比較していません。</p>
+            <div id="difference-list" class="difference-list"></div>
+          </div>
+        </section>
+
+        <section id="view-room" class="view">
+          <div class="card room-card">
+            <h2>マイルーム</h2>
+            <p>ポイントでアイテムを購入して配置しよう。</p>
+            <div id="room-grid" class="room-grid"></div>
+          </div>
+
+          <div class="card shop-card">
+            <h3>ショップ</h3>
+            <div id="shop-items" class="shop-items"></div>
+          </div>
+        </section>
+
+        <section id="view-pdf" class="view">
+          <div class="card">
+            <h2>寮食PDF読み込み</h2>
+            <label class="upload-btn">
+              PDFを読み込む
+              <input type="file" id="meal-pdf-input" accept="application/pdf" />
+            </label>
+            <p id="pdf-status">未読み込み</p>
+            <div id="pdf-preview" class="pdf-preview"></div>
+          </div>
+        </section>
+      </main>
+
+      <button id="open-setup" class="floating-setup">部屋登録を変更</button>
+
+      <nav class="bottom-nav">
+        <button data-view="home" class="nav-btn active">🏠<span>ホーム</span></button>
+        <button data-view="check" class="nav-btn">📷<span>チェック</span></button>
+        <button data-view="room" class="nav-btn">🛋️<span>マイルーム</span></button>
+        <button data-view="pdf" class="nav-btn">📄<span>寮食PDF</span></button>
+      </nav>
+    </div>
+
+    <dialog id="setup-dialog">
+      <form method="dialog" class="setup-panel">
+        <h2>最初に理想の机を登録</h2>
+        <p>この画面は初回のみ自動表示されます。あとで変更もできます。</p>
+        <label class="upload-btn">
+          理想の机を撮影/選択
+          <input type="file" id="ideal-desk-input" accept="image/*" capture="environment" required />
+        </label>
+        <img id="ideal-preview" class="setup-preview" alt="理想の机プレビュー" />
+        <button id="save-setup" value="default" type="submit">保存して始める</button>
+      </form>
+    </dialog>
+
+    <template id="difference-template">
+      <div class="difference-item">
+        <img alt="差分切り抜き" />
+        <div>
+          <p class="difference-type"></p>
+          <p class="difference-message"></p>
+        </div>
+      </div>
+    </template>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
