@@ -53,6 +53,7 @@ const openSetup = document.querySelector("#open-setup");
 bindEvents();
 renderAll();
 loadWeatherAndAdvice();
+registerServiceWorker();
 if (state.isFirstLaunch) {
   setupDialog.showModal();
 }
@@ -351,21 +352,21 @@ function calculateDailyScore() {
 
 function toItemLabel(itemId) {
   const labels = {
-    desk: "🪑 机",
-    chair: "🪑 椅子",
-    cushion: "🧸 クッション",
-    closet: "🚪 クローゼット",
-    clock: "⏰ 時計",
-    plant: "🪴 観葉植物",
-    lamp: "💡 ランプ",
-    bookshelf: "📚 本棚",
-    carpet: "🧶 カーペット",
-    poster: "🖼️ ポスター",
-    whiteboard: "📝 ホワイトボード",
-    humidifier: "💧 加湿器",
-    speaker: "🔊 スピーカー",
-    "bedside-table": "🛏️ サイドテーブル",
-    "storage-box": "🧺 収納ボックス",
+    desk: "机",
+    chair: "椅子",
+    cushion: "クッション",
+    closet: "クローゼット",
+    clock: "時計",
+    plant: "観葉植物",
+    lamp: "ランプ",
+    bookshelf: "本棚",
+    carpet: "カーペット",
+    poster: "ポスター",
+    whiteboard: "ホワイトボード",
+    humidifier: "加湿器",
+    speaker: "スピーカー",
+    "bedside-table": "サイドテーブル",
+    "storage-box": "収納ボックス",
   };
   return labels[itemId] || itemId;
 }
@@ -380,17 +381,28 @@ function renderRoomScene(ownedItems) {
   const floor = document.createElement("div");
   floor.className = "room-floor";
 
-  const groupedItems = {
-    wall: ["clock", "poster", "whiteboard"],
-    left: ["closet", "plant", "bookshelf", "lamp"],
-    center: ["desk", "chair", "cushion", "speaker"],
-    right: ["carpet", "humidifier", "bedside-table", "storage-box"],
-  };
+  const groupedItems = [
+    { id: "clock", zone: "wall-left" },
+    { id: "poster", zone: "wall-center" },
+    { id: "whiteboard", zone: "wall-right" },
+    { id: "closet", zone: "floor-left" },
+    { id: "plant", zone: "floor-front-left" },
+    { id: "bookshelf", zone: "floor-left-mid" },
+    { id: "lamp", zone: "floor-back-left" },
+    { id: "desk", zone: "floor-center" },
+    { id: "chair", zone: "floor-front-center" },
+    { id: "cushion", zone: "floor-front-right" },
+    { id: "speaker", zone: "floor-back-right" },
+    { id: "carpet", zone: "floor-carpet" },
+    { id: "humidifier", zone: "floor-right-mid" },
+    { id: "bedside-table", zone: "floor-right" },
+    { id: "storage-box", zone: "floor-right-back" },
+  ];
 
-  groupedItems.wall.forEach((itemId) => appendRoomItem(wall, itemId, ownedItems));
-  groupedItems.left.forEach((itemId) => appendRoomItem(floor, itemId, ownedItems, "left"));
-  groupedItems.center.forEach((itemId) => appendRoomItem(floor, itemId, ownedItems, "center"));
-  groupedItems.right.forEach((itemId) => appendRoomItem(floor, itemId, ownedItems, "right"));
+  groupedItems.forEach((entry) => {
+    const parent = entry.zone.startsWith("wall") ? wall : floor;
+    appendRoomItem(parent, entry.id, ownedItems, entry.zone);
+  });
 
   scene.appendChild(wall);
   scene.appendChild(floor);
@@ -399,10 +411,14 @@ function renderRoomScene(ownedItems) {
 
 function appendRoomItem(parent, itemId, ownedItems, zone = "") {
   if (!ownedItems.includes(itemId)) return;
-  const badge = document.createElement("div");
-  badge.className = `room-item ${zone}`.trim();
-  badge.textContent = toItemLabel(itemId);
-  parent.appendChild(badge);
+  const item = document.createElement("div");
+  item.className = `room-item room-item-${itemId} ${zone}`.trim();
+  item.title = toItemLabel(itemId);
+  const itemName = document.createElement("span");
+  itemName.className = "room-item-name";
+  itemName.textContent = toItemLabel(itemId);
+  item.appendChild(itemName);
+  parent.appendChild(item);
 }
 
 function calculateRoomCompletion(ownedItems) {
@@ -447,5 +463,14 @@ function loadImage(src) {
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = src;
+  });
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      // サービスワーカーの登録失敗時もアプリ利用は継続する
+    });
   });
 }

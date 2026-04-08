@@ -23,7 +23,7 @@ body {
 .app-shell {
   max-width: 640px;
   margin: 0 auto;
-  padding: 1rem 1rem 6.5rem;
+  padding: 1rem 1rem calc(6.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 .hero h1 {
@@ -139,29 +139,25 @@ body {
 }
 
 .room-scene {
+  position: relative;
   border-radius: 18px;
   overflow: hidden;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 6px 20px rgba(115, 64, 31, 0.15);
 }
 
 .room-wall {
-  min-height: 110px;
+  min-height: 130px;
   background:
-    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.45), transparent 36%),
-    repeating-linear-gradient(90deg, #f7e8d2 0, #f7e8d2 16px, #f2dfc5 16px, #f2dfc5 32px);
-  padding: 0.75rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-content: flex-start;
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.45), transparent 38%),
+    linear-gradient(180deg, #fbefdf 0%, #f0dbc4 100%);
+  border-bottom: 2px solid rgba(145, 95, 60, 0.22);
+  position: relative;
 }
 
 .room-floor {
-  min-height: 150px;
-  padding: 0.75rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.5rem;
+  min-height: 180px;
+  padding: 0;
+  position: relative;
   background: repeating-linear-gradient(
     45deg,
     #d6ad76 0,
@@ -169,28 +165,211 @@ body {
     #cea268 14px,
     #cea268 28px
   );
-  align-items: end;
 }
 
 .room-item {
-  font-size: 0.82rem;
-  padding: 0.5rem 0.62rem;
+  position: absolute;
+  display: flex;
+  align-items: end;
+  justify-content: center;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(132, 81, 45, 0.2);
-  box-shadow: 0 3px 8px rgba(71, 41, 20, 0.12);
+  border: 1px solid rgba(87, 56, 34, 0.2);
+  box-shadow: 0 8px 16px rgba(71, 41, 20, 0.18);
+  color: #56331e;
+  text-align: center;
 }
 
-.room-item.left {
-  justify-self: start;
+.room-item-name {
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  margin-bottom: 0.25rem;
 }
 
-.room-item.center {
-  justify-self: center;
+.room-item-clock,
+.room-item-poster,
+.room-item-whiteboard {
+  height: 46px;
+  top: 18px;
+  background: linear-gradient(180deg, #fff, #f5e7d6);
 }
 
-.room-item.right {
-  justify-self: end;
+.room-item-clock {
+  width: 46px;
+  border-radius: 999px;
+}
+
+.room-item-poster {
+  width: 68px;
+}
+
+.room-item-whiteboard {
+  width: 74px;
+}
+
+.room-item-desk {
+  width: 150px;
+  height: 78px;
+  left: 50%;
+  bottom: 52px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #efd3ae, #d0a677);
+}
+
+.room-item-chair {
+  width: 76px;
+  height: 58px;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #d9dee8, #b9c4d6);
+}
+
+.room-item-closet {
+  width: 66px;
+  height: 122px;
+  left: 12px;
+  bottom: 44px;
+  background: linear-gradient(180deg, #f5f6fa, #d8dde8);
+}
+
+.room-item-bookshelf {
+  width: 58px;
+  height: 94px;
+  left: 94px;
+  bottom: 54px;
+  background: linear-gradient(180deg, #b48158, #8b5b37);
+}
+
+.room-item-lamp {
+  width: 38px;
+  height: 66px;
+  left: 140px;
+  bottom: 60px;
+  background: linear-gradient(180deg, #fff8d9, #f3ce7d);
+}
+
+.room-item-carpet {
+  width: 170px;
+  height: 46px;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  border-radius: 24px;
+  background: linear-gradient(90deg, #f7bdbd, #f6c99b);
+}
+
+.room-item-cushion {
+  width: 56px;
+  height: 28px;
+  left: calc(50% + 48px);
+  bottom: 18px;
+  background: linear-gradient(180deg, #f8efe5, #e2c5a4);
+}
+
+.room-item-speaker {
+  width: 45px;
+  height: 52px;
+  right: 112px;
+  bottom: 56px;
+  background: linear-gradient(180deg, #3b4556, #262f3d);
+  color: #fff;
+}
+
+.room-item-plant {
+  width: 56px;
+  height: 70px;
+  left: 10px;
+  bottom: 10px;
+  background: linear-gradient(180deg, #98d278, #5ca460);
+}
+
+.room-item-humidifier {
+  width: 52px;
+  height: 56px;
+  right: 52px;
+  bottom: 16px;
+  background: linear-gradient(180deg, #d8ebff, #accdf3);
+}
+
+.room-item-bedside-table {
+  width: 58px;
+  height: 62px;
+  right: 12px;
+  bottom: 22px;
+  background: linear-gradient(180deg, #e7bb88, #c99058);
+}
+
+.room-item-storage-box {
+  width: 64px;
+  height: 44px;
+  right: 14px;
+  bottom: 90px;
+  background: linear-gradient(180deg, #f2dfba, #dabd89);
+}
+
+.wall-left {
+  left: 14%;
+}
+
+.wall-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.wall-right {
+  right: 12%;
+}
+
+.floor-left {
+  left: 12px;
+}
+
+.floor-front-left {
+  left: 12px;
+}
+
+.floor-left-mid {
+  left: 94px;
+}
+
+.floor-back-left {
+  left: 140px;
+}
+
+.floor-center {
+  left: 50%;
+}
+
+.floor-front-center {
+  left: 50%;
+}
+
+.floor-front-right {
+  left: calc(50% + 48px);
+}
+
+.floor-back-right {
+  right: 112px;
+}
+
+.floor-carpet {
+  left: 50%;
+}
+
+.floor-right-mid {
+  right: 52px;
+}
+
+.floor-right {
+  right: 12px;
+}
+
+.floor-right-back {
+  right: 14px;
 }
 
 .shop-items {
